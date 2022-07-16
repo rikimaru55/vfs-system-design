@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Wily Wizards</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+    <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <style>
+        .attribute {
+            font-size: larger;
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- Favicon–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <script type="text/javascript">
+
+        const MAX_POSSIBLE_PIECE_VALUE = 55;
+        const SIDEWAYS = 'SIDEWAYS';
+        const FORWARD_BACKWARD = 'FORWARD_BACKWARD';
+        const CARDINAL = 'CARDINAL';
+        const DIAGONAL = 'DIAGONAL';
+        const L_SHAPED = 'L_SHAPED';
+        const CARD_DIAG = 'CARD_DIAG';
+
+        const FORTITUDE = [
+            { value: 1, weight: 1 },
+            { value: 2, weight: 3 },
+            { value: 3, weight: 8 },
+        ];
+
+        const MOVES = [
+            { value: 1, weight: 1 },
+            { value: 2, weight: 1 },
+            { value: 3, weight: 2 },
+            { value: 4, weight: 3 },
+            { value: 5, weight: 5 },
+            { value: 6, weight: 8 },
+            { value: 7, weight: 13 },
+        ];
+
+        const MOVE_TYPE = [
+            { value: SIDEWAYS, weight: 1 },
+            { value: FORWARD_BACKWARD, weight: 1 },
+            { value: CARDINAL, weight: 2 },
+            { value: DIAGONAL, weight: 3 },
+            { value: L_SHAPED, weight: 5 },
+            { value: CARD_DIAG, weight: 8 },
+        ];
+
+        const MOVE_TYPE_IMAGES = {
+            SIDEWAYS: '/images/sideways.png',
+            FORWARD_BACKWARD: '/images/forward_backward.png',
+            CARDINAL: '/images/cardinal.png',
+            DIAGONAL: '/images/diagonal.png',
+            L_SHAPED: '/images/l_shape.png',
+            CARD_DIAG: '/images/card_diag.png',
+        }
+
+        const MOVE_TYPE_FRIENDLY_NAME = {
+            SIDEWAYS: 'Sideways',
+            FORWARD_BACKWARD: 'Forwards & Backwards',
+            CARDINAL: 'Cardinal Directions',
+            DIAGONAL: 'Diagonal',
+            L_SHAPED: 'L-Shaped',
+            CARD_DIAG: 'Cardinal & Diagonal',
+        }
+
+        const JUMPS = [
+            { value: 0, weight: 1 },
+            { value: 1, weight: 8 },
+            { value: 2, weight: 13 },
+        ];
+
+        const ATTACK_RANGE = [
+            { value: 1, weight: 1 },
+            { value: 2, weight: 1 },
+            { value: 3, weight: 2 },
+            { value: 4, weight: 3 },
+            { value: 5, weight: 5 },
+            { value: 6, weight: 8 },
+            { value: 7, weight: 13 },
+        ];
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row" style="margin-top: 25%">
+            <div class="one-third column">
+                <h1>Wily Wizards</h1>
+                <p>Click on the <em>Generate Piece</em> button to generate a new Piece.</p>
+                <button id="generatePieceBtn">Generate Piece</button>
+            </div>
+            <div class="two-thirds column">
+                <div id="results" style="display: none;">
+                    <h2 id="piece_name">Piece</h2>
+                    <h3><span id="value"></span>&nbsp;/&nbsp;<span id="score"></span>%</h3>
+                    <table class="u-full-width">
+                        <tbody>
+                            <tr>
+                                <td class="attribute">Fortitude</td>
+                                <td id="fortitude" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td class="attribute">Move Type</td>
+                                <td colspan="3">
+                                    <p id="move_type"></p>
+                                    <img id="move_type_img" width="300px"></img>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="attribute">Moves/Attack Range</td>
+                                <td id="moves_attack_range"></td>
+                                <td class="attribute">Jumps</td>
+                                <td id="jumps"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><img id="scale_img" src="/images/scale.png" width="300px"></img></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        // Variables
+        const generatePieceBtn = document.getElementById('generatePieceBtn');
+        const results = document.getElementById('results');
+        const pieceValue = document.getElementById('value');
+        const pieceScore = document.getElementById('score');
+        const fortitude = document.getElementById('fortitude');
+        const moveType = document.getElementById('move_type');
+        const moveTypeImg = document.getElementById('move_type_img');
+        const moveAttackRange = document.getElementById('moves_attack_range');
+        const jumps = document.getElementById('jumps');
+        const pieceName = document.getElementById('piece_name');
+
+        // Listeners
+        generatePieceBtn.addEventListener('click', function () {
+            const piece = generatePiece();
+            const results = document.getElementById('results');
+            console.log(JSON.stringify(piece));
+            updatePieceUI(piece);
+        });
+
+        // Functions
+        function generatePiece() {
+            const piece = {};
+            piece.fortitude = chooseFortitude();
+            piece.moveType = chooseMoveType();
+            piece.moves = chooseMoves(piece.moveType.value);
+            piece.jumps = chooseJumps(piece.moves.value);
+            piece.attackRange = chooseAttackRange();
+            let pieceValue = 0;
+            for (let pieceChar of Object.keys(piece)) {
+                console.log(pieceChar, piece[pieceChar]);
+                pieceValue += piece[pieceChar].weight;
+            }
+            piece.pieceValue = pieceValue;
+            piece.pieceScore = Math.round((100.0 / MAX_POSSIBLE_PIECE_VALUE) * pieceValue);
+            piece.pieceName = generatePieceName(piece);
+            return piece;
+
+        }
+
+        function chooseFortitude() {
+            return chooseRandomItemFromArray(FORTITUDE)
+        }
+
+        function chooseMoveType() {
+            return chooseRandomItemFromArray(MOVE_TYPE);
+        }
+
+        function chooseMoves(moveType) {
+            let moves = [...MOVES];
+            switch (moveType) {
+                case L_SHAPED:
+                    moves = moves.filter(x => x.value >= 3);
+                    break;
+                case DIAGONAL:
+                case CARDINAL:
+                case CARD_DIAG:
+                    moves = moves.filter(m => m.value >= 3);
+                    break;
+            }
+            return chooseRandomItemFromArray(moves);
+        }
+
+        function chooseJumps(moves) {
+            let jumps = [...JUMPS];
+            if (moves <= 3) {
+                jumps = jumps.filter(j => j.value < 1);
+            } else if (moves <= 5) {
+                jumps = jumps.filter(j => j.value <= 1)
+            }
+            return chooseRandomItemFromArray(jumps);
+        }
+
+        function chooseAttackRange() {
+            return chooseRandomItemFromArray(ATTACK_RANGE);
+        }
+
+        function chooseRandomItemFromArray(target) {
+            return target[Math.floor(Math.random() * target.length)];
+        }
+
+        function updatePieceUI(piece) {
+            results.style.display = 'block'
+            pieceName.innerHTML = piece.pieceName;
+            pieceValue.innerHTML = piece.pieceValue;
+            pieceScore.innerHTML = piece.pieceScore;
+            fortitude.innerHTML = piece.fortitude.value;
+            moveAttackRange.innerHTML = `${piece.moves.value}/${piece.attackRange.value}`;
+            jumps.innerHTML = piece.jumps.value;
+            moveType.innerHTML = MOVE_TYPE_FRIENDLY_NAME[piece.moveType.value];
+            moveTypeImg.src = MOVE_TYPE_IMAGES[piece.moveType.value];
+        }
+
+        const FORTITUDE_NAMES = {
+            1: ['', 'Feeble', 'Lame'],
+            2: ['Stout', 'Sturdy', 'Vigorous', 'Tough'],
+            3: ['Mighty', 'Shogun', 'Strapping']
+        };
+
+        const MOVE_NAMES = [
+            { values: [1, 2, 3], names: ['', 'Lackadaisical', 'Reluctant', 'Sluggish', 'Leaden', 'Drowsy'] },
+            { values: [4, 5], names: ['Brisk', 'Fleeting', 'Nimble'] },
+            { values: [6, 7], names: ['Fast', 'Swift', 'Supersonic'] },
+        ];
+
+        const ATTACK_RANGE_NAMES = [
+            { values: [1], names: ['Barbarian', 'Scout', 'Monk', 'Fighter'] },
+            { values: [2, 3], names: ['Legionnaire', 'Samurai', 'Knight', 'Lancer', 'Assasin'] },
+            { values: [4, 5], names: ['Ninja', 'Ranger', 'Geomancer', 'Mage', 'Witch'] },
+            { values: [6, 7], names: ['Wizard', 'Sorceress', 'Musketeer', 'Death Knight', 'Holy Knight'] },
+        ];
+
+        const JUMP_NAMES = {
+            0: [''],
+            1: ['Leaping', 'Springing', 'Hurdling'],
+            2: ['Flying', 'Soaring']
+        };
+
+        const MOVE_TYPE_NAMES = {
+            SIDEWAYS: ['Lizardling', 'Bunnyman', 'Molefolk', 'Kobold'],
+            FORWARD_BACKWARD: ['Goblin', 'Nekomimi', 'Fairy', 'Imp'],
+            CARDINAL: ['Dwarf', 'Gnome', ' Halfling', 'Orc'],
+            DIAGONAL: ['Elf', 'Troll', 'Ogre', 'Faun', 'Nymph'],
+            L_SHAPED: ['Centaur', 'Satyr', 'Minotaur', 'Merfolk'],
+            CARD_DIAG: ['Dragon', 'Daemon', 'Angel', 'Asura', 'Titan'],
+        };
+
+        function generatePieceName(piece) {
+            const fortitudeName = chooseRandomItemFromArray(FORTITUDE_NAMES[piece.fortitude.value]);
+            const possibleMoveNames = MOVE_NAMES.filter(mn => mn.values.includes(piece.moves.value))[0].names;
+            const moveName = chooseRandomItemFromArray(possibleMoveNames);
+            const possibleAttackRangeNames = ATTACK_RANGE_NAMES.filter(ar => ar.values.includes(piece.attackRange.value))[0].names;
+            const attackRangeName = chooseRandomItemFromArray(possibleAttackRangeNames);
+            const moveTypeName = chooseRandomItemFromArray(MOVE_TYPE_NAMES[piece.moveType.value]);
+            const jumpName = chooseRandomItemFromArray(JUMP_NAMES[piece.jumps.value])
+
+            return `${fortitudeName} ${moveName} ${jumpName} ${moveTypeName} ${attackRangeName}`;
+        }
+    </script>
+</body>
+
+</html>
