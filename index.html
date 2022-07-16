@@ -27,8 +27,33 @@
             font-size: larger;
             font-weight: bold;
         }
-        .header{
+
+        .header {
             text-align: center;
+        }
+
+        .header>h1 {
+            margin-top: 5px;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .section {
+            background-color: #f3da97ff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .generate-piece-section {
+            text-align: center;
+        }
+
+        body {
+            background-color: #fcf4e1ff;
+        }
+
+        td {
+            border-bottom: 5px solid #000;
         }
     </style>
 
@@ -42,23 +67,30 @@
 
 <body>
     <div class="container">
-        <div class="row"  style="margin-top: 5%">
+        <div class="row" style="margin-top: 5%">
             <div class="12 columns header">
                 <img src="images/cauldron.png" width="35%">
+                <h1>Wily Wizards</h1>
             </div>
         </div>
         <div class="row" style="margin-top: 5%">
-            <div class="one-third column">
-                <h1>Wily Wizards</h1>
+            <div class="one-third column section generate-piece-section">
                 <p>Click on the <em>Generate Piece</em> button to generate a new Piece.</p>
                 <button id="generatePieceBtn">Generate Piece</button>
             </div>
-            <div class="two-thirds column">
+            <div class="two-thirds column section">
                 <div id="results" style="display: none;">
-                    <h2 id="piece_name">Piece</h2>
-                    <h3><span id="value"></span>&nbsp;/&nbsp;<span id="score"></span>%</h3>
+                    <h2 id="piece_name" style="text-align: center">Piece</h2>
                     <table class="u-full-width">
                         <tbody>
+                            <tr>
+                                <td class="attribute">Power</td>
+                                <td colspan="3"><span id="value"></td>
+                            </tr>
+                            <tr>
+                                <td class="attribute">Score</td>
+                                <td colspan="3"><span id="score"></span>/100%</td>
+                            </tr>
                             <tr>
                                 <td class="attribute">Fortitude</td>
                                 <td id="fortitude" colspan="3"></td>
@@ -248,9 +280,9 @@
         }
 
         const FORTITUDE_NAMES = {
-            1: ['', 'Feeble', 'Lame'],
-            2: ['Stout', 'Sturdy', 'Vigorous', 'Tough'],
-            3: ['Mighty', 'Shogun', 'Strapping']
+            1: ['', 'Sickly', 'Lame'],
+            2: ['Armoured', 'Sturdy', 'Vigorous', 'Tough'],
+            3: ['Mighty', 'Lordly', 'Strapping']
         };
 
         const MOVE_NAMES = [
