@@ -27,6 +27,9 @@
             font-size: larger;
             font-weight: bold;
         }
+        .header{
+            text-align: center;
+        }
     </style>
 
     <!-- Favicon–––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -35,9 +38,56 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
+</head>
 
+<body>
+    <div class="container">
+        <div class="row"  style="margin-top: 5%">
+            <div class="12 columns header">
+                <img src="images/cauldron.png" width="35%">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 5%">
+            <div class="one-third column">
+                <h1>Wily Wizards</h1>
+                <p>Click on the <em>Generate Piece</em> button to generate a new Piece.</p>
+                <button id="generatePieceBtn">Generate Piece</button>
+            </div>
+            <div class="two-thirds column">
+                <div id="results" style="display: none;">
+                    <h2 id="piece_name">Piece</h2>
+                    <h3><span id="value"></span>&nbsp;/&nbsp;<span id="score"></span>%</h3>
+                    <table class="u-full-width">
+                        <tbody>
+                            <tr>
+                                <td class="attribute">Fortitude</td>
+                                <td id="fortitude" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td class="attribute">Move Type</td>
+                                <td colspan="3">
+                                    <p id="move_type"></p>
+                                    <img id="move_type_img" width="100%"></img>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="attribute">Moves/Attack Range</td>
+                                <td id="moves_attack_range"></td>
+                                <td class="attribute">Jumps</td>
+                                <td id="jumps"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><img id="scale_img" src="images/scale.png" width="100%"></img></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript">
 
+        // Constants & Variables
         const MAX_POSSIBLE_PIECE_VALUE = 55;
         const SIDEWAYS = 'SIDEWAYS';
         const FORWARD_BACKWARD = 'FORWARD_BACKWARD';
@@ -104,53 +154,7 @@
             { value: 6, weight: 8 },
             { value: 7, weight: 13 },
         ];
-    </script>
 
-</head>
-
-<body>
-    <div class="container">
-        <div class="row" style="margin-top: 25%">
-            <div class="one-third column">
-                <h1>Wily Wizards</h1>
-                <p>Click on the <em>Generate Piece</em> button to generate a new Piece.</p>
-                <button id="generatePieceBtn">Generate Piece</button>
-            </div>
-            <div class="two-thirds column">
-                <div id="results" style="display: none;">
-                    <h2 id="piece_name">Piece</h2>
-                    <h3><span id="value"></span>&nbsp;/&nbsp;<span id="score"></span>%</h3>
-                    <table class="u-full-width">
-                        <tbody>
-                            <tr>
-                                <td class="attribute">Fortitude</td>
-                                <td id="fortitude" colspan="3"></td>
-                            </tr>
-                            <tr>
-                                <td class="attribute">Move Type</td>
-                                <td colspan="3">
-                                    <p id="move_type"></p>
-                                    <img id="move_type_img" width="300px"></img>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="attribute">Moves/Attack Range</td>
-                                <td id="moves_attack_range"></td>
-                                <td class="attribute">Jumps</td>
-                                <td id="jumps"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4"><img id="scale_img" src="images/scale.png" width="300px"></img></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript">
-
-        // Variables
         const generatePieceBtn = document.getElementById('generatePieceBtn');
         const results = document.getElementById('results');
         const pieceValue = document.getElementById('value');
